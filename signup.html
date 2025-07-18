@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="../scss/style.css" />
+</head>
+<body>
+
+  <div class="form-container">
+    <div class="form-left">
+      <h2>Sign Up</h2>
+      <form id="signupForm">
+        <input type="text" class="form-control" placeholder="Full Name" id="fullname" required>
+        <input type="email" class="form-control" placeholder="Email" id="email" required>
+        <input type="password" class="form-control" placeholder="Password" id="password" required>
+        <button type="submit" class="btn-primary">Sign Up</button>
+        <div class="form-link">
+          <p>Already have an account? <a href="login.html">Login</a></p>
+          <p><a href="index.html" class="home-link">Back to Home</a></p> 
+        </div>
+        <div id="messageBox" style="margin-top: 1rem;"></div>
+      </form>
+    </div>
+
+    <div class="form-right">
+      <p>Create an account to enjoy all the features of CyberGuard!</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMyVevSCSFCqFbDBOV-zY_IgzMniuX2d4",
+      authDomain: "login-97a23.firebaseapp.com",
+      projectId: "login-97a23",
+      storageBucket: "login-97a23.firebasestorage.app",
+      messagingSenderId: "494741600676",
+      appId: "1:494741600676:web:b100a87c9d5c3cc367e931"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const signupForm = document.getElementById("signupForm");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const messageBox = document.getElementById("messageBox");
+
+    signupForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      const emailVal = email.value;
+      const passwordVal = password.value;
+
+      createUserWithEmailAndPassword(auth, emailVal, passwordVal)
+        .then((userCredential) => {
+          messageBox.textContent = "✅ Account created successfully!";
+          messageBox.style.color = "green";
+
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 2000);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          messageBox.style.color = "red";
+
+          if (errorCode === "auth/email-already-in-use") {
+            messageBox.textContent = "❌ This email is already registered!";
+          } else if (errorCode === "auth/invalid-email") {
+            messageBox.textContent = "❌ Invalid email format!";
+          } else if (errorCode === "auth/weak-password") {
+            messageBox.textContent = "❌ Password should be at least 6 characters!";
+          } else {
+            messageBox.textContent = `❌ Error: ${error.message}`;
+          }
+        });
+    });
+  </script>
+</body>
+</html>

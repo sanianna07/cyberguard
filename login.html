@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="../scss/style.css">
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-left">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input type="email" class="form-control" placeholder="Email" id="email" required>
+        <input type="password" class="form-control" placeholder="Password" id="password" required>
+        <button type="submit" class="btn-primary">Login</button>
+        <div class="form-link">
+          <p><a href="forgot-password.html">Forgot Password?</a></p>
+          <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+          <p><a href="index.html" class="home-link">Back to Home</a></p>
+        </div>
+        <div id="messageBox" style="margin-top: 1rem; text-align: center;"></div>
+      </form>
+    </div>
+    <div class="form-right">
+      <p>Welcome back! Please enter your login details to continue using CyberGuard.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMyVevSCSFCqFbDBOV-zY_IgzMniuX2d4",
+      authDomain: "login-97a23.firebaseapp.com",
+      projectId: "login-97a23",
+      storageBucket: "login-97a23.firebasestorage.app",
+      messagingSenderId: "494741600676",
+      appId: "1:494741600676:web:b100a87c9d5c3cc367e931"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const messageBox = document.getElementById("messageBox");
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          messageBox.style.color = "green";
+          messageBox.textContent = "Login successful! Redirecting...";
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 2000);
+        })
+        .catch((error) => {
+          messageBox.style.color = "red";
+          switch (error.code) {
+            case "auth/user-not-found":
+              messageBox.textContent = "No account found with this email!";
+              break;
+            case "auth/wrong-password":
+              messageBox.textContent = "Incorrect password!";
+              break;
+            case "auth/invalid-email":
+              messageBox.textContent = "Invalid email format!";
+              break;
+            default:
+              messageBox.textContent = "Login failed. Please try again.";
+              break;
+          }
+        });
+    });
+  </script>
+</body>
+</html>
